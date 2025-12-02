@@ -6,6 +6,8 @@
 #include "S_BaseCharacter.h"
 #include "S_PlayerCharacter.generated.h"
 
+
+class US_PlayerMovementComponent;
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -19,8 +21,14 @@ class SLIDING_API AS_PlayerCharacter : public AS_BaseCharacter
 public:
 	AS_PlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
+	US_PlayerMovementComponent* GetPlayerMovementComponent() const;
+	
+	FCollisionQueryParams GetIgnoreCharacterParams();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement") class US_PlayerMovementComponent* PlayerMovementComponent;
+
+	
 	
 private:
 	
@@ -29,4 +37,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	
 };

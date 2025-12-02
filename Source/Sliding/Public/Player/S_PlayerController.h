@@ -44,7 +44,7 @@ private:
 	void Crouch();
 	void StopCrouching();
 	void Sprint();
-	void StopSprinting();
+	void StopSprinting();	
 	
 	
 };

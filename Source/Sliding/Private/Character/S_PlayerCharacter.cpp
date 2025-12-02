@@ -41,4 +41,21 @@ AS_PlayerCharacter::AS_PlayerCharacter(const FObjectInitializer& ObjectInitializ
 	FollowCamera->bUsePawnControlRotation = false;
 }
 
+US_PlayerMovementComponent* AS_PlayerCharacter::GetPlayerMovementComponent() const
+{
+	return PlayerMovementComponent;
+}
+
+FCollisionQueryParams AS_PlayerCharacter::GetIgnoreCharacterParams()
+{
+	FCollisionQueryParams Params;
+
+	TArray<AActor*> IgnoreActors;
+	GetAllChildActors(IgnoreActors);
+	Params.AddIgnoredActors(IgnoreActors);
+	Params.AddIgnoredActor(this);
+
+	return Params;
+}
+
 
