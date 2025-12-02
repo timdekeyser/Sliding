@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/Character.h"
+#include "Player/S_PlayerMovementComponent.h"
 
 
 void AS_PlayerController::SetupInputComponent()
@@ -30,6 +31,9 @@ void AS_PlayerController::SetupInputComponent()
 	
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::Crouch);
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ThisClass::StopCrouching);
+
+	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::Sprint);
+	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprinting);
 }
 
 void AS_PlayerController::Jump()
@@ -81,3 +85,25 @@ void AS_PlayerController::StopCrouching()
 
 	GetCharacter()->UnCrouch();
 }
+
+void AS_PlayerController::Sprint()
+{
+	UE_LOG(LogTemp, Display, TEXT("Sprint"));
+	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
+
+	if (!IsValid(PlayerMovementComponent)) return ;
+
+	PlayerMovementComponent->SprintPressed();
+}
+
+void AS_PlayerController::StopSprinting()
+{
+	UE_LOG(LogTemp, Display, TEXT("StopSprinting"));
+	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
+
+	if (!IsValid(PlayerMovementComponent)) return ;
+
+	PlayerMovementComponent->SprintReleased();
+}
+
+

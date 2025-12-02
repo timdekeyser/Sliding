@@ -34,11 +34,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding|Input|Movement")
 	TObjectPtr<UInputAction> CrouchAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sliding|Input|Movement")
+	TObjectPtr<UInputAction> SprintAction;
+
 	void Jump();
 	void StopJumping();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Crouch();
 	void StopCrouching();
+	void Sprint();
+	void StopSprinting();
+	
 	
 };

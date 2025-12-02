@@ -7,9 +7,13 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/S_PlayerMovementComponent.h"
 
-AS_PlayerCharacter::AS_PlayerCharacter()
+AS_PlayerCharacter::AS_PlayerCharacter(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer.SetDefaultSubobjectClass<US_PlayerMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
+	PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacterMovement());
+	
 	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);

@@ -3,7 +3,7 @@
 
 #include "Sliding/Public/Character/S_BaseCharacter.h"
 
-AS_BaseCharacter::AS_BaseCharacter()
+AS_BaseCharacter::AS_BaseCharacter(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
 }

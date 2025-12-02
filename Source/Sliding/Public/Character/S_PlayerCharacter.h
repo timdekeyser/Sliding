@@ -14,8 +14,13 @@ class SLIDING_API AS_PlayerCharacter : public AS_BaseCharacter
 {
 	GENERATED_BODY()
 
+	
+
 public:
-	AS_PlayerCharacter();
+	AS_PlayerCharacter(const FObjectInitializer& ObjectInitializer);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement") class US_PlayerMovementComponent* PlayerMovementComponent;
 	
 private:
 	

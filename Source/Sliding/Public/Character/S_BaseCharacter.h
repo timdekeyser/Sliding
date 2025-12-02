@@ -12,7 +12,7 @@ class SLIDING_API AS_BaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AS_BaseCharacter();
+	AS_BaseCharacter(const FObjectInitializer& ObjectInitializer);
 
 
 };
