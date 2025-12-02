@@ -74,21 +74,24 @@ void AS_PlayerController::Look(const FInputActionValue& Value)
 
 void AS_PlayerController::Crouch()
 {
-	if (!IsValid(GetCharacter())) return ;
-	
-	GetCharacter()->Crouch();
+	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
+
+	if (!IsValid(PlayerMovementComponent)) return ;
+
+	PlayerMovementComponent->CrouchPressed();
 }
 
 void AS_PlayerController::StopCrouching()
 {
-	if (!IsValid(GetCharacter())) return ;
+	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
 
-	GetCharacter()->UnCrouch();
+	if (!IsValid(PlayerMovementComponent)) return ;
+
+	PlayerMovementComponent->CrouchPressed();
 }
 
 void AS_PlayerController::Sprint()
 {
-	UE_LOG(LogTemp, Display, TEXT("Sprint"));
 	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
 
 	if (!IsValid(PlayerMovementComponent)) return ;
@@ -98,7 +101,6 @@ void AS_PlayerController::Sprint()
 
 void AS_PlayerController::StopSprinting()
 {
-	UE_LOG(LogTemp, Display, TEXT("StopSprinting"));
 	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
 
 	if (!IsValid(PlayerMovementComponent)) return ;

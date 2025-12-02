@@ -44,10 +44,10 @@ public:
 	US_PlayerMovementComponent();
 
 	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
-
 	
 	void SprintPressed();
 	void SprintReleased();
+	void CrouchPressed();
 
 protected:
 	virtual void UpdateFromCompressedFlags(uint8 Flags) override;

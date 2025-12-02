@@ -5,6 +5,62 @@
 #include "GameFramework/Character.h"
 
 
+void US_PlayerMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
+{
+	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
+
+	if (MovementMode == MOVE_Walking)
+	{
+		if (Safe_bWantsToSprint)
+		{
+			MaxWalkSpeed = Sprint_MaxWalkSpeed;
+		}
+		else
+		{
+			MaxWalkSpeed = Walk_MaxWalkSpeed;
+		}
+	}
+}
+
+void US_PlayerMovementComponent::SprintPressed()
+{
+	Safe_bWantsToSprint = true;
+}
+
+void US_PlayerMovementComponent::SprintReleased()
+{
+	Safe_bWantsToSprint = false;
+}
+
+void US_PlayerMovementComponent::CrouchPressed()
+{
+	bWantsToCrouch = !bWantsToCrouch;
+}
+
+US_PlayerMovementComponent::US_PlayerMovementComponent()
+{
+	NavAgentProps.bCanCrouch = true;
+}
+
+uint8 US_PlayerMovementComponent::FSavedMove_Sliding::GetCompressedFlags() const
+{
+	uint8 Result = Super::GetCompressedFlags();
+
+	if (Saved_bWantsToSprint)
+	{
+		Result |= FLAG_Custom_0;
+	}
+
+	return Result;
+	
+}
+
+
+
+
+
+
+
 bool US_PlayerMovementComponent::FSavedMove_Sliding::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
 {
 	FSavedMove_Sliding* NewSlidingMove = static_cast<FSavedMove_Sliding*>(NewMove.Get());
@@ -23,20 +79,6 @@ void US_PlayerMovementComponent::FSavedMove_Sliding::Clear()
 
 	Saved_bWantsToSprint = 0;
 }
-
-uint8 US_PlayerMovementComponent::FSavedMove_Sliding::GetCompressedFlags() const
-{
-	uint8 Result = Super::GetCompressedFlags();
-
-	if (Saved_bWantsToSprint)
-	{
-		Result |= FLAG_Custom_0;
-	}
-
-	return Result;
-	
-}
-
 void US_PlayerMovementComponent::FSavedMove_Sliding::SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData)
 {
 	FSavedMove_Character::SetMoveFor(C, InDeltaTime, NewAccel, ClientData);
@@ -81,43 +123,11 @@ FNetworkPredictionData_Client* US_PlayerMovementComponent::GetPredictionData_Cli
 	return ClientPredictionData;
 }
 
-void US_PlayerMovementComponent::SprintPressed()
-{
-	Safe_bWantsToSprint = true;
-}
-
-void US_PlayerMovementComponent::SprintReleased()
-{
-	Safe_bWantsToSprint = false;
-}
-
 void US_PlayerMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 {
 	Super::UpdateFromCompressedFlags(Flags);
 
 	Safe_bWantsToSprint = (Flags & FSavedMove_Character::FLAG_Custom_0) != 0;
-}
-
-void US_PlayerMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
-{
-	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
-
-	if (MovementMode == MOVE_Walking)
-	{
-		if (Safe_bWantsToSprint)
-		{
-			MaxWalkSpeed = Sprint_MaxWalkSpeed;
-		}
-		else
-		{
-			MaxWalkSpeed = Walk_MaxWalkSpeed;
-		}
-	}
-}
-
-US_PlayerMovementComponent::US_PlayerMovementComponent()
-{
-	
 }
 
 
