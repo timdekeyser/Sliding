@@ -83,11 +83,9 @@ void AS_PlayerController::Crouch()
 
 void AS_PlayerController::StopCrouching()
 {
-	US_PlayerMovementComponent* PlayerMovementComponent = Cast<US_PlayerMovementComponent>(GetCharacter()->GetMovementComponent());
+	if (!IsValid(GetCharacter())) return ;
 
-	if (!IsValid(PlayerMovementComponent)) return ;
-
-	PlayerMovementComponent->CrouchPressed();
+	GetCharacter()->UnCrouch();
 }
 
 void AS_PlayerController::Sprint()

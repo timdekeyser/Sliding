@@ -27,7 +27,9 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement") class US_PlayerMovementComponent* PlayerMovementComponent;
-
+	
+	virtual bool CanCrouch() const override;
+	
 	
 	
 private:

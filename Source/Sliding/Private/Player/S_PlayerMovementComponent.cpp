@@ -37,8 +37,12 @@ void US_PlayerMovementComponent::InitializeComponent()
 
 void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
-	if (MovementMode == MOVE_Walking && Safe_bWantsToSprint && Safe_bPrevWantsToCrouch)
+	if (MovementMode == MOVE_Walking && Safe_bPrevWantsToCrouch )
 	{
+		ACharacter* Character = Cast<ACharacter>(PawnOwner);
+		if (!Character)
+			return;
+
 		
 		FHitResult PotentialSlideSurface;
 		if (Velocity.SizeSquared() > pow(Slide_MinSpeed,2) && GetSlideSurface(PotentialSlideSurface))
@@ -50,6 +54,22 @@ void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaS
 	if (IsCustomMovementMode(SMOVE_Slide) && !bWantsToCrouch )
 	{
 		EnterSlide();
+	}
+
+	if (MovementMode == MOVE_Custom && CustomMovementMode == SMOVE_Slide)
+	{
+		ACharacter* Character = Cast<ACharacter>(PawnOwner);
+		if (!Character)
+			return;
+		
+		if (Character->bPressedJump)
+		{
+			ExitSlide();
+			SetMovementMode(MOVE_Walking);
+			Character->Jump();
+
+			return; 
+		}
 	}
 	
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
@@ -76,6 +96,13 @@ bool US_PlayerMovementComponent::IsMovingOnGround() const
 
 bool US_PlayerMovementComponent::CanCrouchInCurrentState() const
 {
+	
+	if (IsFalling())
+	{
+		return true;
+	}
+	
+	
 	return Super::CanCrouchInCurrentState() && IsMovingOnGround();
 }
 
@@ -98,6 +125,10 @@ void US_PlayerMovementComponent::ExitSlide()
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(FVector::ZeroVector, NewRotation, true, Hit);
 	SetMovementMode(MOVE_Walking);
+	if (CharacterOwner)
+	{
+		CharacterOwner->UnCrouch();
+	}
 }
 
 void US_PlayerMovementComponent::PhysSlide(float DeltaTime, int32 Iterations)

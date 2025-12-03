@@ -58,4 +58,14 @@ FCollisionQueryParams AS_PlayerCharacter::GetIgnoreCharacterParams()
 	return Params;
 }
 
+bool AS_PlayerCharacter::CanCrouch() const
+{
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return true;
+	}
+	
+	return Super::CanCrouch();
+}
+
 
