@@ -37,7 +37,7 @@ void US_PlayerMovementComponent::InitializeComponent()
 
 void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
-	if (MovementMode == MOVE_Walking && Safe_bPrevWantsToCrouch )
+	if (MovementMode == MOVE_Walking && bWantsToCrouch && Safe_bPrevWantsToCrouch)
 	{
 		ACharacter* Character = Cast<ACharacter>(PawnOwner);
 		if (!Character)
@@ -50,23 +50,36 @@ void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaS
 			EnterSlide();
 		}
 	}
-
+	/*
 	if (IsCustomMovementMode(SMOVE_Slide) && !bWantsToCrouch )
 	{
 		EnterSlide();
-	}
+	}*/
 
 	if (MovementMode == MOVE_Custom && CustomMovementMode == SMOVE_Slide)
 	{
-		ACharacter* Character = Cast<ACharacter>(PawnOwner);
-		if (!Character)
+		
+		if (!IsValid(GetCharacterOwner()))
 			return;
 		
-		if (Character->bPressedJump)
+		if (GetCharacterOwner()->bPressedJump)
 		{
 			ExitSlide();
-			SetMovementMode(MOVE_Walking);
-			Character->Jump();
+
+			SetMovementMode(MOVE_Falling);
+
+			const float JumpZ = GetCharacterOwner()->GetCharacterMovement()->JumpZVelocity;
+
+			FVector HorizontalMomentum = Velocity;
+
+			HorizontalMomentum.Z = 0.f;
+
+			FVector JumpImpulse = HorizontalMomentum + FVector(0.f, 0.f, JumpZ);
+
+			GetCharacterOwner()->LaunchCharacter(JumpImpulse, true, true);
+
+			GetCharacterOwner()->bPressedJump = false;
+			
 
 			return; 
 		}
@@ -118,13 +131,14 @@ void US_PlayerMovementComponent::EnterSlide()
 void US_PlayerMovementComponent::ExitSlide()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ExitSlide"));
-	
+	bIsSliding = false;
 	bWantsToCrouch = false;
-
+	
+	/*
 	FQuat NewRotation = FRotationMatrix::MakeFromXZ(UpdatedComponent->GetForwardVector().GetSafeNormal(), FVector::UpVector).ToQuat();
 	FHitResult Hit;
-	SafeMoveUpdatedComponent(FVector::ZeroVector, NewRotation, true, Hit);
-	SetMovementMode(MOVE_Walking);
+	SafeMoveUpdatedComponent(FVector::ForwardVector, NewRotation, true, Hit);
+	SetMovementMode(MOVE_Walking);*/
 	if (CharacterOwner)
 	{
 		CharacterOwner->UnCrouch();
