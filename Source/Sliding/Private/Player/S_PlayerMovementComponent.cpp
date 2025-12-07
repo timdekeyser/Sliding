@@ -37,11 +37,12 @@ void US_PlayerMovementComponent::InitializeComponent()
 
 void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
+	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
+	
 	if (MovementMode == MOVE_Walking && bWantsToCrouch && Safe_bPrevWantsToCrouch)
 	{
 		ACharacter* Character = Cast<ACharacter>(PawnOwner);
-		if (!Character)
-			return;
+		if (!Character) return;
 
 		
 		FHitResult PotentialSlideSurface;
@@ -59,8 +60,7 @@ void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaS
 	if (MovementMode == MOVE_Custom && CustomMovementMode == SMOVE_Slide)
 	{
 		
-		if (!IsValid(GetCharacterOwner()))
-			return;
+		if (!IsValid(GetCharacterOwner())) return;
 		
 		if (GetCharacterOwner()->bPressedJump)
 		{
@@ -84,8 +84,6 @@ void US_PlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaS
 			return; 
 		}
 	}
-	
-	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
 }
 
 void US_PlayerMovementComponent::PhysCustom(float DeltaTime, int32 Iterations)
@@ -122,7 +120,7 @@ bool US_PlayerMovementComponent::CanCrouchInCurrentState() const
 void US_PlayerMovementComponent::EnterSlide()
 {
 	UE_LOG(LogTemp, Warning, TEXT("EnterSlide"));
-	
+	bIsSliding = true;
 	bWantsToCrouch = true;
 	Velocity += Velocity.GetSafeNormal2D() * Slide_EnterImpulse;
 	SetMovementMode(MOVE_Custom, SMOVE_Slide);
@@ -139,6 +137,7 @@ void US_PlayerMovementComponent::ExitSlide()
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(FVector::ForwardVector, NewRotation, true, Hit);
 	SetMovementMode(MOVE_Walking);*/
+	
 	if (CharacterOwner)
 	{
 		CharacterOwner->UnCrouch();
@@ -155,7 +154,7 @@ void US_PlayerMovementComponent::PhysSlide(float DeltaTime, int32 Iterations)
 	if (!GetSlideSurface(SurfaceHit) || Velocity.SizeSquared() < pow(Slide_MinSpeed, 2))
 	{
 		ExitSlide();
-		StartNewPhysics(DeltaTime, Iterations);
+		SetMovementMode(MOVE_Walking);
 		return;
 	}
 
@@ -198,6 +197,8 @@ void US_PlayerMovementComponent::PhysSlide(float DeltaTime, int32 Iterations)
 	if (!GetSlideSurface(NewSurfaceHit) || Velocity.SizeSquared() < pow(Slide_MinSpeed, 2))
 	{
 		ExitSlide();
+		SetMovementMode(MOVE_Walking);
+		return;
 	}
 
 	if (!bJustTeleported && !HasAnimRootMotion() && !CurrentRootMotion.HasOverrideVelocity())
